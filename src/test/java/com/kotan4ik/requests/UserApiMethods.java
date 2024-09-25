@@ -55,6 +55,16 @@ public class UserApiMethods extends BaseRequest {
                 .patch(USER_BASE);
     }
 
+    @Step("Updating user data without authorization. New email = {email}, new name = {name}")
+    public static Response updateUserData(String email, String name) {
+        User user = new User(email, null, name);
+
+        return RestAssured.given()
+                .contentType(ContentType.JSON)
+                .body(user)
+                .patch(USER_BASE);
+    }
+
     @Step("Parsing response to get token")
     public static String getTokenFromResponse(Response response) {
         SuccessfulCreateLoginResponse responseObject = assertDoesNotThrow(() -> fromJson(response.asString(), SuccessfulCreateLoginResponse.class),
