@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UserApiMethods extends BaseRequest {
     private static final String REGISTER_BASE = "auth/register";
+    private static final String LOGIN_BASE = "auth/login";
     private static final String USER_BASE = "auth/user";
 
     @Step("Sending createUser request with email = {email}, password = {password}, name = {name}")
@@ -21,6 +22,16 @@ public class UserApiMethods extends BaseRequest {
                 .header("Content-type", "application/json")
                 .body(user)
                 .post(REGISTER_BASE);
+    }
+
+    @Step("Logging in request for user with email = {email}, password = {password} and name = {name}")
+    public static Response loginUser(String email, String password, String name) {
+        User user = new User(email, password, name);
+
+        return RestAssured.given()
+                .header("Content-type", "application/json")
+                .body(user)
+                .post(LOGIN_BASE);
     }
 
     @Step("Deleting user with token = {token}")
