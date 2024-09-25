@@ -5,6 +5,7 @@ import com.kotan4ik.models.SuccessfulCreateLoginResponse;
 import com.kotan4ik.models.User;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,6 +43,18 @@ public class UserApiMethods extends BaseRequest {
                 .delete(USER_BASE);
     }
 
+    @Step("Updating user data. New email = {email}, new name = {name}. Token ={token}")
+    public static Response updateUserData(String email, String name, String token) {
+        User user = new User(email, null, name);
+
+        return RestAssured.given()
+                .auth()
+                .oauth2(token)
+                .contentType(ContentType.JSON)
+                .body(user)
+                .patch(USER_BASE);
+    }
+
     @Step("Parsing response to get token")
     public static String getTokenFromResponse(Response response) {
         SuccessfulCreateLoginResponse responseObject = assertDoesNotThrow(() -> fromJson(response.asString(), SuccessfulCreateLoginResponse.class),
@@ -70,5 +83,21 @@ public class UserApiMethods extends BaseRequest {
         assertAll(() -> assertFalse(responseObject.isSuccess(), "Success field should be false"),
                 () -> assertNotNull(responseObject.getMessage(), "Error message shouldn't be null"),
                 () -> assertEquals(errorMessage, responseObject.getMessage(), "Received error message is equal to expected"));
+    }
+
+    @Step("Checking response code is equal to expected {expCode}")
+    public static void checkResponseCode(Response response, int expCode) {
+        assertEquals(expCode, response.statusCode(), "Response code isn't equal to expected");
+    }
+
+    @Step
+    public static void checkUpdateUserDataResponse(Response response, String expEmail, String expName) {
+        SuccessfulCreateLoginResponse responseObject = assertDoesNotThrow(() -> fromJson(response.asString(), SuccessfulCreateLoginResponse.class));
+        assertAll(() -> assertTrue(responseObject.isSuccess(), "Success field should be true"),
+                () -> assertNotNull(responseObject.getUser(), "User shouldn't be null"),
+                () -> assertNotNull(responseObject.getUser().getName(), "User name shouldn't be null"),
+                () -> assertEquals(expName, responseObject.getUser().getName(), "User name is not equal to expected"),
+                () -> assertNotNull(responseObject.getUser().getEmail(), "User email shouldn't be null"),
+                () -> assertEquals(expEmail.toLowerCase(), responseObject.getUser().getEmail().toLowerCase(), "Email is not equal to expected"));
     }
 }
