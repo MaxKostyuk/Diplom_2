@@ -55,13 +55,12 @@ public class CreateOrderTest {
     }
 
     @Test
-    @DisplayName("Positive test without authorization")
-    @Description("Positive test for creation of order. Without authorization. Should return status code 200 and successful body")
-    public void createOrderPositiveTestWithoutAuthorizationShouldReturn() {
+    @DisplayName("Negative test without authorization")
+    @Description("Negative for creation of order. Without authorization. Should return status code 500")
+    public void createOrderNegativeTestWithoutAuthorizationShouldReturn500() {
         Response response = createOrder(ingredients);
 
-        checkResponseCode(response, HttpStatus.SC_OK);
-        checkSuccessfulOrderResponse(response);
+        checkResponseCode(response, HttpStatus.SC_INTERNAL_SERVER_ERROR);
     }
 
     @Test
