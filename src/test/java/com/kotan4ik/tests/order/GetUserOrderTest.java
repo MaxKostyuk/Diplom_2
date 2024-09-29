@@ -5,42 +5,32 @@ import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import io.restassured.response.Response;
 import org.apache.http.HttpStatus;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.List;
-import java.util.Random;
 
-import static com.kotan4ik.utils.ErrorMessages.UNAUTHORIZED;
 import static com.kotan4ik.requests.OrderApiMethods.*;
-import static com.kotan4ik.requests.UserApiMethods.*;
+import static com.kotan4ik.requests.UserApiMethods.deleteUser;
+import static com.kotan4ik.utils.ErrorMessages.UNAUTHORIZED;
+import static com.kotan4ik.utils.TestUtils.generateTestUser;
+import static com.kotan4ik.utils.TestUtils.getTestIngredients;
 
 @Epic("Order management")
 @Feature("Get user orders")
 @DisplayName("Get user orders tests")
 public class GetUserOrderTest {
-    private static final String MAIL_BASE = "testUserName@test.com";
-    private static final String NAME_BASE = "testUserName";
-    private static final String VALID_PASSWORD = "12345678";
-    private static final String VALID_INGREDIENT_1 = "61c0c5a71d1f82001bdaaa6d";
-    private static final String VALID_INGREDIENT_2 = "61c0c5a71d1f82001bdaaa6f";
-    private static String testEmail;
-    private static String testName;
-    private static String token;
     private static List<String> ingredients;
+    private String token;
 
     @BeforeAll
     public static void setUp() {
-        Random random = new Random();
-        int randomPrefix = random.nextInt(1000000000);
-        testEmail = randomPrefix + MAIL_BASE;
-        testName = randomPrefix + NAME_BASE;
-        ingredients = List.of(VALID_INGREDIENT_1, VALID_INGREDIENT_2);
+        ingredients = getTestIngredients();
 
-        Response response = createUser(testEmail, VALID_PASSWORD, testName);
-        token = getTokenFromResponse(response);
+    }
+
+    @BeforeEach
+    public void generateTestData() {
+        token = generateTestUser();
         createOrder(ingredients, token);
     }
 

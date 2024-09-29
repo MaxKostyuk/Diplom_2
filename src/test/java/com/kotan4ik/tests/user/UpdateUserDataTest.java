@@ -5,45 +5,41 @@ import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import io.restassured.response.Response;
 import org.apache.http.HttpStatus;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
-import java.util.Random;
+import java.util.Map;
 
-import static com.kotan4ik.utils.ErrorMessages.UNAUTHORIZED;
 import static com.kotan4ik.requests.UserApiMethods.*;
+import static com.kotan4ik.utils.ErrorMessages.UNAUTHORIZED;
+import static com.kotan4ik.utils.TestUtils.generateRandomUserProperties;
+import static com.kotan4ik.utils.TestUtils.generateTestUser;
 
 @Epic("User management")
 @Feature("Update user data")
 @DisplayName("Update user data tests")
 public class UpdateUserDataTest {
-    private static final String MAIL_BASE = "testUserName@test.com";
-    private static final String NAME_BASE = "testUserName";
-    private static final String VALID_PASSWORD = "12345678";
-    private static String testEmail;
-    private static String testName;
+    private static Map<String, String> testValues;
     private String token;
 
     @BeforeAll
     public static void setUp() {
-        Random random = new Random();
-        int randomPrefix = random.nextInt(1000000000);
-        testEmail = randomPrefix + MAIL_BASE;
-        testName = randomPrefix + NAME_BASE;
+        testValues = generateRandomUserProperties();
+    }
+
+    @BeforeEach
+    public void generateUser() {
+        token = generateTestUser(testValues);
     }
 
     @Test
     @DisplayName("Positive test")
     @Description("Positive test for update user data. Should return successful response body")
     public void updateUserDatePositiveTestShouldReturnSuccessfulBody() {
-        Response response = createUser(testEmail, VALID_PASSWORD, testName);
-        token = getTokenFromResponse(response);
-        String newEmail = 1 + testEmail;
-        String newName = 1 + testName;
+        String newEmail = 1 + testValues.get("email");
+        String newName = 1 + testValues.get("name");
 
-        response = updateUserData(newEmail, newName, token);
+        Response response = updateUserData(newEmail, newName, token);
+
         checkResponseCode(response, HttpStatus.SC_OK);
         checkUpdateUserDataResponse(response, newEmail, newName);
     }
@@ -52,10 +48,8 @@ public class UpdateUserDataTest {
     @DisplayName("Negative test without authorization")
     @Description("Negative test for update user data. Should return code 401 and error body with corresponding error message")
     public void updateUserDataNegativeTestWithoutAuthorizationShouldReturn401AndErrorBody() {
-        Response response = createUser(testEmail, VALID_PASSWORD, testName);
-        token = getTokenFromResponse(response);
+        Response response = updateUserData(null, null);
 
-        response = updateUserData(null, null);
         checkResponseCode(response, HttpStatus.SC_UNAUTHORIZED);
         checkErrorResponse(response, UNAUTHORIZED);
     }

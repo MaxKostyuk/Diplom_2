@@ -13,37 +13,31 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Random;
+import java.util.Map;
 import java.util.stream.Stream;
 
+import static com.kotan4ik.requests.UserApiMethods.*;
 import static com.kotan4ik.utils.ErrorMessages.NOT_ENOUGH_DATA;
 import static com.kotan4ik.utils.ErrorMessages.USER_ALREADY_EXISTS;
-import static com.kotan4ik.requests.UserApiMethods.*;
+import static com.kotan4ik.utils.TestUtils.generateRandomUserProperties;
 
 @Epic("User management")
 @Feature("Create user")
 @DisplayName("Create user tests")
 public class CreateUserTest {
-    private static final String MAIL_BASE = "testUserName@test.com";
-    private static final String NAME_BASE = "testUserName";
-    private static final String VALID_PASSWORD = "12345678";
-    private static String testEmail;
-    private static String testName;
+    private static Map<String, String> testValues;
     private String token;
 
     @BeforeAll
     public static void setUp() {
-        Random random = new Random();
-        int randomPrefix = random.nextInt(1000000000);
-        testEmail = randomPrefix + MAIL_BASE;
-        testName = randomPrefix + NAME_BASE;
+        testValues = generateRandomUserProperties();
     }
 
     @Test
     @DisplayName("Positive test")
     @Description("Positive test to create user")
     public void createUserPositiveShouldReturnSuccessBody() {
-        Response response = createUser(testEmail, VALID_PASSWORD, testName);
+        Response response = createUser(testValues.get("email"), testValues.get("password"), testValues.get("name"));
         token = getTokenFromResponse(response);
 
         checkResponseCode(response, HttpStatus.SC_OK);
@@ -54,10 +48,10 @@ public class CreateUserTest {
     @DisplayName("Negative test - user with these data already exists")
     @Description("Creating user twice with the same data. Second time should be error response")
     public void createUserNegativeUserAlreadyExists() {
-        Response response = createUser(testEmail, VALID_PASSWORD, testName);
+        Response response = createUser(testValues.get("email"), testValues.get("password"), testValues.get("name"));
         token = getTokenFromResponse(response);
 
-        response = createUser(testEmail, VALID_PASSWORD, testName);
+        response = createUser(testValues.get("email"), testValues.get("password"), testValues.get("name"));
         checkResponseCode(response, HttpStatus.SC_FORBIDDEN);
         checkErrorResponse(response, USER_ALREADY_EXISTS);
     }
@@ -81,9 +75,9 @@ public class CreateUserTest {
 
     private static Stream<Arguments> provideInvalidUserData() {
         return Stream.of(
-                Arguments.of(null, VALID_PASSWORD, testName),
-                Arguments.of(testEmail, null, testName),
-                Arguments.of(testEmail, VALID_PASSWORD, null)
+                Arguments.of(null, testValues.get("password"), testValues.get("name")),
+                Arguments.of(testValues.get("email"), null, testValues.get("name")),
+                Arguments.of(testValues.get("email"), testValues.get("password"), null)
         );
     }
 }
