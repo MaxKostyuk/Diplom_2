@@ -1,4 +1,4 @@
-package com.kotan4ik;
+package com.kotan4ik.utils;
 
 public class ErrorMessages {
     public static final String USER_ALREADY_EXISTS = "User already exists";

@@ -16,8 +16,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.Random;
 import java.util.stream.Stream;
 
-import static com.kotan4ik.ErrorMessages.NOT_ENOUGH_DATA;
-import static com.kotan4ik.ErrorMessages.USER_ALREADY_EXISTS;
+import static com.kotan4ik.utils.ErrorMessages.NOT_ENOUGH_DATA;
+import static com.kotan4ik.utils.ErrorMessages.USER_ALREADY_EXISTS;
 import static com.kotan4ik.requests.UserApiMethods.*;
 
 @Epic("User management")

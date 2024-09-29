@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Random;
 
-import static com.kotan4ik.ErrorMessages.UNAUTHORIZED;
+import static com.kotan4ik.utils.ErrorMessages.UNAUTHORIZED;
 import static com.kotan4ik.requests.UserApiMethods.*;
 
 @Epic("User management")

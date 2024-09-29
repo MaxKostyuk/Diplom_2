@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Random;
 
-import static com.kotan4ik.ErrorMessages.INGREDIENTS_SHOULD_BE_PROVIDED;
+import static com.kotan4ik.utils.ErrorMessages.INGREDIENTS_SHOULD_BE_PROVIDED;
 import static com.kotan4ik.requests.OrderApiMethods.*;
 import static com.kotan4ik.requests.UserApiMethods.*;
 
