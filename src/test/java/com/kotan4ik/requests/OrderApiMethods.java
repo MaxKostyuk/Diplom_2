@@ -17,7 +17,7 @@ public class OrderApiMethods extends BaseRequest {
     private static final String ORDER_BASE = "orders/";
 
 
-    @Step("Create order request with ingredients = {ingredients} and token = {token}")
+    @Step("Create order request with ingredients = {ingredientList} and token = {token}")
     public static Response createOrder(List<String> ingredientList, String token) {
         Map<String, List<String>> ingredientMap = Map.of("ingredients", ingredientList);
 
