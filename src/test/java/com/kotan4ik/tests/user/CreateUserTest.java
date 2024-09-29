@@ -5,6 +5,7 @@ import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import io.restassured.response.Response;
 import org.apache.http.HttpStatus;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,12 +44,10 @@ public class CreateUserTest {
     @Description("Positive test to create user")
     public void createUserPositiveShouldReturnSuccessBody() {
         Response response = createUser(testEmail, VALID_PASSWORD, testName);
+        token = getTokenFromResponse(response);
 
         checkResponseCode(response, HttpStatus.SC_OK);
         checkCreateLoginResponse(response);
-
-        token = getTokenFromResponse(response);
-        deleteUser(token);
     }
 
     @Test
@@ -61,8 +60,6 @@ public class CreateUserTest {
         response = createUser(testEmail, VALID_PASSWORD, testName);
         checkResponseCode(response, HttpStatus.SC_FORBIDDEN);
         checkErrorResponse(response, USER_ALREADY_EXISTS);
-
-        deleteUser(token);
     }
 
     @ParameterizedTest
@@ -74,6 +71,12 @@ public class CreateUserTest {
 
         checkResponseCode(response, HttpStatus.SC_FORBIDDEN);
         checkErrorResponse(response, NOT_ENOUGH_DATA);
+    }
+
+    @AfterEach
+    public void tearDown() {
+        if (token != null)
+            deleteUser(token);
     }
 
     private static Stream<Arguments> provideInvalidUserData() {
