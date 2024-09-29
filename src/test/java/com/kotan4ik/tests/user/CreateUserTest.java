@@ -1,9 +1,10 @@
-package com.kotan4ik.tests;
+package com.kotan4ik.tests.user;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import io.restassured.response.Response;
+import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,6 +43,8 @@ public class CreateUserTest {
     @Description("Positive test to create user")
     public void createUserPositiveShouldReturnSuccessBody() {
         Response response = createUser(testEmail, VALID_PASSWORD, testName);
+
+        checkResponseCode(response, HttpStatus.SC_OK);
         checkCreateLoginResponse(response);
 
         token = getTokenFromResponse(response);
@@ -56,6 +59,7 @@ public class CreateUserTest {
         token = getTokenFromResponse(response);
 
         response = createUser(testEmail, VALID_PASSWORD, testName);
+        checkResponseCode(response, HttpStatus.SC_FORBIDDEN);
         checkErrorResponse(response, USER_ALREADY_EXISTS);
 
         deleteUser(token);
@@ -67,6 +71,8 @@ public class CreateUserTest {
     @Description("Parameterized test to create user with missing one of parameters: password, email or user name")
     public void createUserNegativeTestWithMissingField(String email, String password, String name) {
         Response response = createUser(email, password, name);
+
+        checkResponseCode(response, HttpStatus.SC_FORBIDDEN);
         checkErrorResponse(response, NOT_ENOUGH_DATA);
     }
 

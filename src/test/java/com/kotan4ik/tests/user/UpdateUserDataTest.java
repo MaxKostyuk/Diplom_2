@@ -1,4 +1,4 @@
-package com.kotan4ik.tests;
+package com.kotan4ik.tests.user;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;

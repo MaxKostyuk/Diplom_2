@@ -1,9 +1,10 @@
-package com.kotan4ik.tests;
+package com.kotan4ik.tests.user;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import io.restassured.response.Response;
+import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -45,6 +46,8 @@ public class LoginTest {
         token = getTokenFromResponse(response);
 
         response = loginUser(testEmail, VALID_PASSWORD, testName);
+
+        checkResponseCode(response, HttpStatus.SC_OK);
         checkCreateLoginResponse(response);
     }
 
@@ -57,6 +60,8 @@ public class LoginTest {
         token = getTokenFromResponse(response);
 
         response = loginUser(email, password, testName);
+
+        checkResponseCode(response, HttpStatus.SC_UNAUTHORIZED);
         checkErrorResponse(response, INCORRECT_LOGIN_DATA);
     }
 
