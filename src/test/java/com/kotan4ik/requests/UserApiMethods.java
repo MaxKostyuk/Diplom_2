@@ -1,6 +1,5 @@
 package com.kotan4ik.requests;
 
-import com.kotan4ik.models.ErrorResponse;
 import com.kotan4ik.models.SuccessfulCreateLoginResponse;
 import com.kotan4ik.models.User;
 import io.qameta.allure.Step;
@@ -84,20 +83,6 @@ public class UserApiMethods extends BaseRequest {
                 () -> assertNull(responseObject.getUser().getPassword(), "Password should be null"),
                 () -> assertNotNull(responseObject.getAccessToken(), "Response should have access token"),
                 () -> assertNotNull(responseObject.getRefreshToken(), "Response should have refresh token"));
-    }
-
-    @Step("Checking error response is valid and has message {errorMessage}")
-    public static void checkErrorResponse(Response response, String errorMessage) {
-        ErrorResponse responseObject = assertDoesNotThrow(() -> fromJson(response.asString(), ErrorResponse.class),
-                "JSON response has incompatible structure");
-        assertAll(() -> assertFalse(responseObject.isSuccess(), "Success field should be false"),
-                () -> assertNotNull(responseObject.getMessage(), "Error message shouldn't be null"),
-                () -> assertEquals(errorMessage, responseObject.getMessage(), "Received error message is equal to expected"));
-    }
-
-    @Step("Checking response code is equal to expected {expCode}")
-    public static void checkResponseCode(Response response, int expCode) {
-        assertEquals(expCode, response.statusCode(), "Response code isn't equal to expected");
     }
 
     @Step
