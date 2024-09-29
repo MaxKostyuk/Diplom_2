@@ -1,5 +1,6 @@
 package com.kotan4ik.requests;
 
+import com.kotan4ik.models.GetOrdersResponse;
 import com.kotan4ik.models.OrderSuccessfulResponse;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
@@ -50,12 +51,34 @@ public class OrderApiMethods extends BaseRequest {
                 .post(ORDER_BASE);
     }
 
+    @Step("Get user orders request with token ={token}")
+    public static Response getUserOrders(String token) {
+        return RestAssured.given()
+                .auth()
+                .oauth2(token)
+                .get(ORDER_BASE);
+    }
+
+    @Step("Get user orders request without authorization")
+    public static Response getUserOrders() {
+        return RestAssured.given()
+                .get(ORDER_BASE);
+    }
+
     @Step("Checking successful order response is valid")
     public static void checkSuccessfulOrderResponse(Response response) {
         OrderSuccessfulResponse responseObject = assertDoesNotThrow(() -> fromJson(response.asString(), OrderSuccessfulResponse.class));
         assertAll(() -> assertTrue(responseObject.isSuccess(), "Success field should be true"),
                 () -> assertNotNull(responseObject.getName(), "Name shouldn't be null"),
                 () -> assertNotNull(responseObject.getOrder(), "Order shouldn't be null"));
+    }
+
+    @Step("Checking successful get user orders body is valid")
+    public static void checkSuccessfulGetUserOrdersResponse(Response response) {
+        GetOrdersResponse responseObject = assertDoesNotThrow(() -> fromJson(response.asString(), GetOrdersResponse.class));
+        assertAll(() -> assertTrue(responseObject.isSuccess()),
+                () -> assertNotNull(responseObject.getOrders())
+        );
     }
 
 }
