@@ -1,12 +1,11 @@
 package com.kotan4ik.utils;
 
+import com.kotan4ik.models.Ingredient;
 import io.restassured.response.Response;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
+import static com.kotan4ik.requests.IngredientApiMethods.getIngredients;
 import static com.kotan4ik.requests.UserApiMethods.createUser;
 import static com.kotan4ik.requests.UserApiMethods.getTokenFromResponse;
 
@@ -14,8 +13,6 @@ public class TestUtils {
     private static final String MAIL_BASE = "testUserName@test.com";
     private static final String NAME_BASE = "testUserName";
     private static final String VALID_PASSWORD = "12345678";
-    private static final String VALID_INGREDIENT_1 = "61c0c5a71d1f82001bdaaa6d";
-    private static final String VALID_INGREDIENT_2 = "61c0c5a71d1f82001bdaaa6f";
 
     public static Map<String, String> generateRandomUserProperties() {
         Map<String, String> values = new HashMap<>();
@@ -43,7 +40,13 @@ public class TestUtils {
         return getTokenFromResponse(response);
     }
 
-    public static List<String> getTestIngredients() {
-        return List.of(VALID_INGREDIENT_1, VALID_INGREDIENT_2);
+    public static List<String> getTestIngredients(int numberOfIngredients) {
+        List<Ingredient> ingredients = getIngredients();
+        if (numberOfIngredients > ingredients.size())
+            numberOfIngredients = ingredients.size();
+        List<String> ingredientIds = new ArrayList<>();
+        for (int i = 0; i < numberOfIngredients; i++)
+            ingredientIds.add(ingredients.get(i).getId());
+        return ingredientIds;
     }
 }

@@ -24,7 +24,7 @@ public class GetUserOrderTest {
 
     @BeforeAll
     public static void setUp() {
-        ingredients = getTestIngredients();
+        ingredients = getTestIngredients(2);
 
     }
 
